@@ -142,19 +142,19 @@ header {
     z-index: 5;
     background: url('background.jpg.png') no-repeat center center;
     background-size: cover;
-    padding: 15rem 2rem 4rem;
-    /* Increased top padding for blend area */
+    padding: 6rem 2rem 4rem;
+    /* Reduced top padding */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 4rem;
-    /* Create a smooth fade from the hero image into this section */
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%);
-    mask-image: linear-gradient(to bottom, transparent 0%, black 15%);
-    margin-top: -20vh;
-    /* Pull visually up to start blending overlap */
+    /* Create a very sharp, subtle fade to avoid the "bright fog" look */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 5%);
+    margin-top: -5vh;
+    /* Minimal overlap */
 }
 
 .fact-card {
