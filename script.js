@@ -8,15 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     window.scrollTo(0, 0);
 
-    // ---- Subtle parallax on hero background ----
-    const bg = document.querySelector('.background-container');
-    if (bg) {
-        bg.style.transform = 'scale(1)';
-    }
-
     // ---- Header scroll effect ----
     const header = document.getElementById('main-header');
-    let lastScroll = 0;
 
     window.addEventListener('scroll', () => {
         const currentScroll = window.scrollY;
@@ -26,14 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             header.classList.remove('scrolled');
         }
-
-        // Parallax on background
-        if (bg && currentScroll < window.innerHeight) {
-            const parallaxOffset = currentScroll * 0.3;
-            bg.style.transform = `scale(1.05) translateY(${parallaxOffset}px)`;
-        }
-
-        lastScroll = currentScroll;
     }, { passive: true });
 
     // ---- Scroll animations (IntersectionObserver) ----
@@ -58,9 +43,160 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Observe section headers
-    document.querySelectorAll('.section-header').forEach(header => {
-        observer.observe(header);
+    document.querySelectorAll('.section-header:not(.gallery-header)').forEach(el => {
+        observer.observe(el);
     });
+
+    // ---- Facts section close button ----
+    const factsClose = document.getElementById('facts-close');
+    const factsSection = document.getElementById('facts-section');
+
+    if (factsClose && factsSection) {
+        factsClose.addEventListener('click', () => {
+            factsSection.classList.add('hidden');
+        });
+    }
+
+    // ---- Dynamic Photo Gallery ----
+    const galleryTrack = document.getElementById('gallery-track');
+    const galleryCounter = document.getElementById('gallery-counter');
+    const prevBtn = document.getElementById('gallery-prev');
+    const nextBtn = document.getElementById('gallery-next');
+
+    if (galleryTrack) {
+        // Try loading photos with various extensions
+        const extensions = ['jpeg', 'jpg', 'png', 'webp', ''];
+        let photoCount = 0;
+        let maxCheck = 20; // Check up to photo20
+
+        function tryLoadPhoto(index) {
+            if (index > maxCheck) {
+                // All done checking, update counter
+                if (galleryCounter) {
+                    galleryCounter.textContent = photoCount + ' PHOTOS';
+                }
+                if (photoCount === 0 && galleryTrack) {
+                    galleryTrack.innerHTML = '<p style="color: rgba(255,255,255,0.4); font-size: 0.9rem; letter-spacing: 2px;">No photos found. Add photo1.jpg, photo2.jpg, etc. to the project folder.</p>';
+                }
+                return;
+            }
+
+            let loaded = false;
+
+            function tryExt(extIndex) {
+                if (extIndex >= extensions.length) {
+                    // None of the extensions worked for this index
+                    tryLoadPhoto(index + 1);
+                    return;
+                }
+
+                const ext = extensions[extIndex];
+                const filename = ext ? `photo${index}.${ext}` : `photo${index}`;
+                const img = new Image();
+
+                img.onload = function () {
+                    if (!loaded) {
+                        loaded = true;
+                        photoCount++;
+
+                        const item = document.createElement('div');
+                        item.className = 'gallery-item';
+
+                        const displayImg = document.createElement('img');
+                        displayImg.src = filename;
+                        displayImg.alt = `Island Photo ${index}`;
+                        displayImg.loading = 'lazy';
+
+                        item.appendChild(displayImg);
+                        galleryTrack.appendChild(item);
+
+                        // Click to open lightbox
+                        item.addEventListener('click', () => {
+                            openLightbox(filename);
+                        });
+
+                        tryLoadPhoto(index + 1);
+                    }
+                };
+
+                img.onerror = function () {
+                    if (!loaded) {
+                        tryExt(extIndex + 1);
+                    }
+                };
+
+                img.src = filename;
+            }
+
+            tryExt(0);
+        }
+
+        tryLoadPhoto(1);
+
+        // Gallery scroll controls
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                galleryTrack.scrollBy({ left: -420, behavior: 'smooth' });
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                galleryTrack.scrollBy({ left: 420, behavior: 'smooth' });
+            });
+        }
+    }
+
+    // ---- Lightbox ----
+    function openLightbox(src) {
+        // Remove existing lightbox if any
+        const existing = document.querySelector('.lightbox');
+        if (existing) existing.remove();
+
+        const lightbox = document.createElement('div');
+        lightbox.className = 'lightbox';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'lightbox-close';
+        closeBtn.textContent = '✕';
+
+        const img = document.createElement('img');
+        img.src = src;
+
+        lightbox.appendChild(closeBtn);
+        lightbox.appendChild(img);
+        document.body.appendChild(lightbox);
+
+        // Animate in
+        requestAnimationFrame(() => {
+            lightbox.classList.add('active');
+        });
+
+        // Close handlers
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            setTimeout(() => lightbox.remove(), 400);
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', closeLightbox);
+
+        img.addEventListener('click', (e) => {
+            e.stopPropagation(); // Don't close when clicking the image
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function onEscape(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+                document.removeEventListener('keydown', onEscape);
+            }
+        });
+    }
 
     // ---- Floating Particles ----
     const canvas = document.getElementById('particles');
@@ -104,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (this.opacity <= 0.05) this.growing = true;
                 }
 
-                // Wrap around edges
                 if (this.x < 0) this.x = canvas.width;
                 if (this.x > canvas.width) this.x = 0;
                 if (this.y < 0) this.y = canvas.height;
@@ -119,7 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Create particles (fewer for performance)
         const particleCount = Math.min(60, Math.floor(window.innerWidth / 25));
         for (let i = 0; i < particleCount; i++) {
             particles.push(new Particle());
@@ -136,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         animate();
 
-        // Pause particles when tab is not visible
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 cancelAnimationFrame(animationId);
