@@ -4,59 +4,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Epstein Island</title>
+    <title>Epstein Island — Private Island Resort</title>
+    <meta name="description"
+        content="Epstein Island — An exclusive private island resort offering ultimate privacy, luxury accommodations, and unparalleled experiences.">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap"
         rel="stylesheet">
 </head>
 
 <body>
+    <!-- Particle canvas for ambient effect -->
+    <canvas id="particles"></canvas>
+
+    <!-- Fixed hero background -->
     <div class="background-container"></div>
     <div class="overlay"></div>
 
-    <header>
+    <!-- Navigation -->
+    <header id="main-header">
         <nav>
-            <div class="logo">EI</div>
+            <div class="logo">
+                <span class="logo-icon">◆</span>
+                <span class="logo-text">EPSTEIN ISLAND</span>
+            </div>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#experiences">Experiences</a>
+                <a href="https://www.instagram.com/hafizhalill/" target="_blank">Contact</a>
+            </div>
         </nav>
     </header>
 
-    <main class="hero">
+    <!-- Hero Section -->
+    <main class="hero" id="hero">
         <div class="hero-content">
-            <h1>EPSTEIN ISLAND</h1>
-            <p>PRIVATE. EXCLUSIVE. UNTOUCHED.</p>
-            <a href="https://www.instagram.com/hafizhalill/" target="_blank" class="cta-button">Reserve your place
-                today</a>
+            <div class="hero-subtitle-top">
+                <span class="line"></span>
+                <span>WELCOME TO PARADISE</span>
+                <span class="line"></span>
+            </div>
+            <h1>
+                <span class="title-line">EPSTEIN</span>
+                <span class="title-line accent">ISLAND</span>
+            </h1>
+            <p class="tagline">PRIVATE · EXCLUSIVE · UNTOUCHED</p>
+            <a href="https://www.instagram.com/hafizhalill/" target="_blank" class="cta-button">
+                <span class="cta-text">Reserve Your Place</span>
+                <span class="cta-arrow">→</span>
+            </a>
         </div>
 
         <div class="scroll-indicator">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
-            </svg>
+            <div class="scroll-line"></div>
+            <span class="scroll-text">SCROLL</span>
         </div>
     </main>
 
+    <!-- Divider -->
+    <div class="section-divider" id="about">
+        <span class="divider-diamond">◆</span>
+    </div>
+
+    <!-- Facts / About Section -->
     <section class="facts-section">
-        <div class="fact-card">
-            <h2>Ultimate Privacy</h2>
-            <p>Private Island with full privacy and security with Epstein and Halill.</p>
+        <div class="section-header">
+            <span class="section-label">WHAT WE OFFER</span>
+            <h2 class="section-title">An Experience <em>Beyond</em> Compare</h2>
         </div>
 
-        <div class="fact-card">
-            <h2>Luxury Accommodations</h2>
-            <p>Luxury villas designed for the utmost comfort and elegance.</p>
-        </div>
+        <div class="facts-grid">
+            <div class="fact-card" data-delay="0">
+                <div class="card-number">01</div>
+                <div class="card-accent"></div>
+                <h3>Ultimate Privacy</h3>
+                <p>Private Island with full privacy and security with Epstein and Halill.</p>
+            </div>
 
-        <div class="fact-card">
-            <h2>Exclusive Access</h2>
-            <p>Feel free to send your kids here with maximum protection from predators.</p>
+            <div class="fact-card" data-delay="200">
+                <div class="card-number">02</div>
+                <div class="card-accent"></div>
+                <h3>Luxury Accommodations</h3>
+                <p>Luxury villas designed for the utmost comfort and elegance.</p>
+            </div>
+
+            <div class="fact-card" data-delay="400">
+                <div class="card-number">03</div>
+                <div class="card-accent"></div>
+                <h3>Exclusive Access</h3>
+                <p>Feel free to send your kids here with maximum protection from predators.</p>
+            </div>
         </div>
     </section>
 
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2026 Epstein and Halill Accommodations. All rights reserved.</p>
+        <div class="footer-content">
+            <div class="footer-logo">◆ EPSTEIN ISLAND ◆</div>
+            <p class="footer-copy">&copy; 2026 Epstein and Halill Accommodations. All rights reserved.</p>
+        </div>
     </footer>
 
     <script src="script.js"></script>
