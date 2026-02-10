@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const ext = extensions[extIndex];
-                const filename = ext ? `/photo${index}.${ext}` : `/photo${index}`;
+                const filename = ext ? `photo${index}.${ext}` : `photo${index}`;
                 const img = new Image();
 
                 img.onload = function () {
