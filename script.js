@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Try loading photos with various extensions
         const extensions = ['jpeg', 'jpg', 'png', 'webp', ''];
         let photoCount = 0;
-        let maxCheck = 20; // Check up to photo20
+        let maxCheck = 100; // Check up to photo100
 
         function tryLoadPhoto(index) {
             if (index > maxCheck) {
