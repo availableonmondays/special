@@ -27,6 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (entry.isIntersecting) {
                 entry.target.style.opacity = '1';
                 entry.target.style.transform = 'translateY(0)';
+            } else {
+                // Reset styles when scrolling away so it animates again
+                entry.target.style.opacity = '0';
+                entry.target.style.transform = 'translateY(50px)';
             }
         });
     }, { threshold: 0.2 });
