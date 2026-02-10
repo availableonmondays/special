@@ -52,8 +52,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const factsSection = document.getElementById('facts-section');
 
     if (factsClose && factsSection) {
+        // Create the reopen button
+        const reopenBtn = document.createElement('button');
+        reopenBtn.className = 'facts-reopen';
+        reopenBtn.textContent = '◆ WHAT WE OFFER';
+        reopenBtn.style.display = 'none';
+        factsSection.parentNode.insertBefore(reopenBtn, factsSection);
+
         factsClose.addEventListener('click', () => {
             factsSection.classList.add('hidden');
+            setTimeout(() => {
+                reopenBtn.style.display = 'flex';
+            }, 800);
+        });
+
+        reopenBtn.addEventListener('click', () => {
+            reopenBtn.style.display = 'none';
+            factsSection.classList.remove('hidden');
         });
     }
 
@@ -62,6 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const galleryCounter = document.getElementById('gallery-counter');
     const prevBtn = document.getElementById('gallery-prev');
     const nextBtn = document.getElementById('gallery-next');
+
+    // Track all loaded photo sources for lightbox navigation
+    const loadedPhotos = [];
 
     if (galleryTrack) {
         // Try loading photos with various extensions
@@ -109,10 +127,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         item.appendChild(displayImg);
                         galleryTrack.appendChild(item);
+                        loadedPhotos.push(filename);
 
                         // Click to open lightbox
                         item.addEventListener('click', () => {
-                            openLightbox(filename);
+                            openLightbox(filename, loadedPhotos);
                         });
 
                         tryLoadPhoto(index + 1);
@@ -147,11 +166,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ---- Lightbox ----
-    function openLightbox(src) {
-        // Remove existing lightbox if any
+    // ---- Lightbox with navigation ----
+    function openLightbox(src, photos) {
         const existing = document.querySelector('.lightbox');
         if (existing) existing.remove();
+
+        let currentIndex = photos.indexOf(src);
 
         const lightbox = document.createElement('div');
         lightbox.className = 'lightbox';
@@ -160,23 +180,58 @@ document.addEventListener('DOMContentLoaded', () => {
         closeBtn.className = 'lightbox-close';
         closeBtn.textContent = '✕';
 
+        const prevArrow = document.createElement('button');
+        prevArrow.className = 'lightbox-arrow lightbox-prev';
+        prevArrow.innerHTML = '‹';
+
+        const nextArrow = document.createElement('button');
+        nextArrow.className = 'lightbox-arrow lightbox-next';
+        nextArrow.innerHTML = '›';
+
         const img = document.createElement('img');
         img.src = src;
 
+        const counter = document.createElement('span');
+        counter.className = 'lightbox-counter';
+        counter.textContent = `${currentIndex + 1} / ${photos.length}`;
+
         lightbox.appendChild(closeBtn);
+        lightbox.appendChild(prevArrow);
+        lightbox.appendChild(nextArrow);
         lightbox.appendChild(img);
+        lightbox.appendChild(counter);
         document.body.appendChild(lightbox);
 
-        // Animate in
         requestAnimationFrame(() => {
             lightbox.classList.add('active');
         });
 
-        // Close handlers
+        function navigate(direction) {
+            currentIndex = (currentIndex + direction + photos.length) % photos.length;
+            img.style.opacity = '0';
+            img.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => {
+                img.src = photos[currentIndex];
+                img.style.opacity = '1';
+                counter.textContent = `${currentIndex + 1} / ${photos.length}`;
+            }, 200);
+        }
+
         function closeLightbox() {
             lightbox.classList.remove('active');
             setTimeout(() => lightbox.remove(), 400);
+            document.removeEventListener('keydown', onKey);
         }
+
+        prevArrow.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigate(-1);
+        });
+
+        nextArrow.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigate(1);
+        });
 
         closeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -186,16 +241,15 @@ document.addEventListener('DOMContentLoaded', () => {
         lightbox.addEventListener('click', closeLightbox);
 
         img.addEventListener('click', (e) => {
-            e.stopPropagation(); // Don't close when clicking the image
+            e.stopPropagation();
         });
 
-        // Close on Escape key
-        document.addEventListener('keydown', function onEscape(e) {
-            if (e.key === 'Escape') {
-                closeLightbox();
-                document.removeEventListener('keydown', onEscape);
-            }
-        });
+        function onKey(e) {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navigate(-1);
+            if (e.key === 'ArrowRight') navigate(1);
+        }
+        document.addEventListener('keydown', onKey);
     }
 
     // ---- Floating Particles ----
