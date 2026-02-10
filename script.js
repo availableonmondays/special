@@ -3,6 +3,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Epstein Island loaded.');
 
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
     // Simple fade-in animation for hero content
     const content = document.querySelector('.hero-content');
     if (content) {
